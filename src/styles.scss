@@ -1,0 +1,176 @@
+/* ==========================================================================
+   Khurana Kitchenware — Design Tokens (Modern Gen-Z / DTC brand direction)
+   Palette: crisp white base, near-black ink, and three muted accent colors
+   (soft terracotta, sage, dusty rose/gold) — high contrast structure with a
+   calmer, subtler color story than a neon/high-saturation palette.
+   Type: Bricolage Grotesque (bold, chunky display) + Inter (body) +
+   Space Grotesk (utility/eyebrow — techy, confident, all-caps friendly).
+   Buttons/badges use a neubrutalist hard-offset shadow (softened opacity,
+   not solid black) for a tactile, "stuck-on-with-tape" feel.
+   ========================================================================== */
+
+:root {
+  --kk-cream: #FFFFFF;
+  --kk-ivory: #FBF6EF;
+  --kk-charcoal: #201B16;
+  --kk-copper: #C9724F;
+  --kk-copper-light: #D99B7F;
+  --kk-steel: #6B6660;
+  --kk-line: rgba(32, 27, 22, 0.14);
+  --kk-line-light: rgba(255, 255, 255, 0.2);
+
+  /* Muted accent colors for badges, highlights, and accents */
+  --kk-lime: #9CAF7C;
+  --kk-pink: #C98A9B;
+  --kk-yellow: #D9AE55;
+
+  --kk-font-display: 'Bricolage Grotesque', 'Arial Black', sans-serif;
+  --kk-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --kk-font-utility: 'Space Grotesk', 'Inter', sans-serif;
+
+  --kk-radius-sm: 10px;
+  --kk-radius-md: 22px;
+  --kk-container: 1240px;
+  --kk-gutter: clamp(20px, 5vw, 64px);
+  --kk-shadow-hard: 4px 4px 0 rgba(32, 27, 22, 0.55);
+  --kk-shadow-hard-lg: 6px 6px 0 rgba(32, 27, 22, 0.55);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--kk-cream);
+  color: var(--kk-charcoal);
+  font-family: var(--kk-font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--kk-font-display);
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 0 0 0.5em;
+  letter-spacing: -0.01em;
+}
+
+p { margin: 0 0 1em; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img { max-width: 100%; display: block; }
+
+button { font-family: inherit; }
+
+:focus-visible {
+  outline: 3px solid var(--kk-charcoal);
+  outline-offset: 3px;
+}
+
+.kk-container {
+  max-width: var(--kk-container);
+  margin: 0 auto;
+  padding: 0 var(--kk-gutter);
+}
+
+.kk-eyebrow {
+  display: inline-block;
+  font-family: var(--kk-font-utility);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--kk-charcoal);
+  background: var(--kk-lime);
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 2px solid var(--kk-charcoal);
+}
+
+.kk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--kk-font-utility);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 15px 30px;
+  border-radius: var(--kk-radius-sm);
+  border: 2.5px solid var(--kk-charcoal);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
+  background: var(--kk-cream);
+  color: var(--kk-charcoal);
+  box-shadow: var(--kk-shadow-hard);
+}
+
+.kk-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--kk-shadow-hard-lg);
+}
+.kk-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--kk-charcoal);
+}
+
+.kk-btn--primary {
+  background: var(--kk-copper);
+  color: var(--kk-cream);
+}
+.kk-btn--primary:hover { background: var(--kk-charcoal); color: var(--kk-lime); }
+
+.kk-btn--outline {
+  background: var(--kk-cream);
+  color: var(--kk-charcoal);
+}
+.kk-btn--outline:hover { background: var(--kk-yellow); }
+
+.kk-btn--copper {
+  background: var(--kk-pink);
+  border-color: var(--kk-charcoal);
+  color: var(--kk-cream);
+}
+.kk-btn--copper:hover { background: var(--kk-charcoal); color: var(--kk-pink); }
+
+.kk-section { padding: clamp(56px, 9vw, 112px) 0; }
+.kk-section--dark {
+  background: var(--kk-charcoal);
+  color: var(--kk-cream);
+}
+.kk-section--ivory { background: var(--kk-ivory); }
+
+.kk-section-head {
+  max-width: 640px;
+  margin: 0 0 48px;
+}
+.kk-section-head--center {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.kk-divider {
+  width: 56px;
+  height: 6px;
+  background: var(--kk-copper);
+  border-radius: 100px;
+  margin: 16px 0 18px;
+}
+.kk-section-head--center .kk-divider { margin-left: auto; margin-right: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}

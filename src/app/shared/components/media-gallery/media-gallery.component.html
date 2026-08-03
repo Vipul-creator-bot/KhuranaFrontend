@@ -1,0 +1,42 @@
+<div class="kk-gallery">
+  <div class="kk-gallery__viewer" kkTilt [kkTiltMax]="5">
+    <span class="kk-gallery__badge" *ngIf="badge">{{ badge }}</span>
+    <video
+      *ngIf="showVideo"
+      [src]="video"
+      controls
+      autoplay
+      playsinline
+      class="kk-gallery__video"
+    ></video>
+    <img
+      *ngIf="!showVideo"
+      [src]="images[activeImageIndex]"
+      [alt]="alt"
+      class="kk-gallery__image"
+    />
+  </div>
+
+  <div class="kk-gallery__thumbs" *ngIf="images.length > 1 || video">
+    <button
+      type="button"
+      class="kk-gallery__thumb"
+      *ngFor="let img of images; let i = index"
+      [class.is-active]="!showVideo && activeImageIndex === i"
+      (click)="selectImage(i)"
+    >
+      <img [src]="img" [alt]="alt + ' view ' + (i + 1)" />
+    </button>
+
+    <button
+      type="button"
+      class="kk-gallery__thumb kk-gallery__thumb--video"
+      *ngIf="video"
+      [class.is-active]="showVideo"
+      (click)="playVideo()"
+    >
+      <img [src]="images[0]" [alt]="alt + ' video'" />
+      <span class="kk-gallery__play">&#9658;</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+<section class="kk-about-hero">
+  <div class="kk-container kk-about-hero__inner">
+    <div>
+      <span class="kk-eyebrow">About Khurana Kitchenware</span>
+      <h1>Building Kitchens People <em>Trust</em>, One Product at a Time.</h1>
+      <p>
+        Khurana Kitchenware Private Limited designs and manufactures cookware, bakeware and
+        table essentials for households and businesses across India — grounded in durable
+        materials, honest pricing and considered design.
+      </p>
+    </div>
+    <img src="https://images.unsplash.com/photo-1556909114-44e3e70034e2?w=900&q=80" alt="Khurana Kitchenware workshop" />
+  </div>
+</section>
+
+<section class="kk-section kk-section--ivory">
+  <div class="kk-container kk-mission-grid">
+    <div class="kk-mission-card">
+      <span class="kk-eyebrow">Our Mission</span>
+      <div class="kk-divider"></div>
+      <p>To make premium-quality kitchenware accessible to every Indian household — without compromising on durability, safety or design.</p>
+    </div>
+    <div class="kk-mission-card">
+      <span class="kk-eyebrow">Our Vision</span>
+      <div class="kk-divider"></div>
+      <p>To become India's most trusted kitchenware brand, recognised for craftsmanship that outlasts trends.</p>
+    </div>
+    <div class="kk-mission-card">
+      <span class="kk-eyebrow">Our Promise</span>
+      <div class="kk-divider"></div>
+      <p>Every product that leaves our facility is tested for everyday performance before it reaches your kitchen.</p>
+    </div>
+  </div>
+</section>
+
+<section class="kk-section">
+  <div class="kk-container">
+    <div class="kk-section-head kk-section-head--center">
+      <span class="kk-eyebrow">Our Journey</span>
+      <div class="kk-divider"></div>
+      <h2>Milestones Along the Way</h2>
+    </div>
+
+    <div class="kk-timeline">
+      <div class="kk-timeline__item" *ngFor="let m of milestones">
+        <span class="kk-timeline__year">{{ m.year }}</span>
+        <p>{{ m.text }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="kk-section kk-section--dark">
+  <div class="kk-container">
+    <div class="kk-section-head kk-section-head--center">
+      <span class="kk-eyebrow">How We Work</span>
+      <div class="kk-divider"></div>
+      <h2>Behind Every Product</h2>
+    </div>
+    <div class="kk-team-grid">
+      <div class="kk-team-card" *ngFor="let t of team">
+        <h3>{{ t.name }}</h3>
+        <p>{{ t.text }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="kk-cta-banner">
+  <div class="kk-container kk-cta-banner__inner">
+    <div>
+      <h2>Have a Bulk or Corporate Gifting Enquiry?</h2>
+      <p>Our team is happy to help with custom orders, hospitality supply and corporate gifting.</p>
+    </div>
+    <div class="kk-cta-banner__actions">
+      <a routerLink="/contact" class="kk-btn kk-btn--primary">Get in Touch</a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,17 @@
+<form class="kk-newsletter" (ngSubmit)="submit()" #f="ngForm">
+  <input
+    type="email"
+    name="email"
+    placeholder="Your email address"
+    [(ngModel)]="email"
+    required
+    email
+    [disabled]="status === 'loading'"
+  />
+  <button type="submit" class="kk-btn kk-btn--copper" [disabled]="f.invalid || status === 'loading'">
+    {{ status === 'loading' ? 'Signing up…' : 'Sign Up' }}
+  </button>
+</form>
+<p class="kk-newsletter__status" *ngIf="statusMessage" [class.is-error]="status === 'error'">
+  {{ statusMessage }}
+</p>

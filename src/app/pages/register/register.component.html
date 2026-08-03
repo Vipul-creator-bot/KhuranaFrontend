@@ -1,0 +1,47 @@
+<section class="kk-auth">
+  <div class="kk-container kk-auth__inner">
+    <div class="kk-auth__card">
+      <span class="kk-eyebrow">Join Khurana Kitchenware</span>
+      <h1>Create Your Account</h1>
+      <p class="kk-auth__sub">Already have an account? <a [routerLink]="['/login']" [queryParams]="{returnUrl: returnUrl}">Log in</a></p>
+
+      <div class="kk-auth__perk">
+        🎉 Register today and get an <strong>extra 5% off your first order</strong> — applied automatically at checkout.
+      </div>
+
+      <form #f="ngForm" (ngSubmit)="submit(f)">
+        <label>
+          Full Name
+          <input type="text" name="name" [(ngModel)]="model.name" required minlength="2" />
+        </label>
+        <label>
+          Email Address
+          <input type="email" name="email" [(ngModel)]="model.email" required email />
+        </label>
+        <label>
+          Phone Number (WhatsApp)
+          <input
+            type="tel"
+            name="phone"
+            [(ngModel)]="model.phone"
+            required
+            pattern="^[6-9]\d{9}$"
+            placeholder="10-digit mobile number"
+          />
+          <span class="kk-auth__hint">We'll use this for order updates — no spam.</span>
+        </label>
+        <label>
+          Password
+          <input type="password" name="password" [(ngModel)]="model.password" required minlength="6" />
+          <span class="kk-auth__hint">At least 6 characters</span>
+        </label>
+
+        <button type="submit" class="kk-btn kk-btn--primary" [disabled]="f.invalid || status === 'loading'">
+          {{ status === 'loading' ? 'Creating account…' : 'Create Account' }}
+        </button>
+
+        <p class="kk-auth__error" *ngIf="status === 'error'">{{ errorMessage }}</p>
+      </form>
+    </div>
+  </div>
+</section>

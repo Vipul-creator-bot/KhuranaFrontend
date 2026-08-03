@@ -1,0 +1,65 @@
+<header class="kk-header" [class.kk-header--scrolled]="isScrolled">
+  <div class="kk-container kk-header__row">
+    <a routerLink="/" class="kk-header__brand" (click)="closeMenu()">
+      <span class="kk-header__mark" ><img src="../../../../frontend/assets/khurankitchenware.png"></span>
+      <span class="kk-header__wordmark">
+        Khurana <em>Kitchenware</em>
+      </span>
+    </a>
+
+    <nav class="kk-header__nav" [class.kk-header__nav--open]="isMenuOpen">
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{exact: true}" (click)="closeMenu()">Home</a>
+
+      <div class="kk-header__dropdown" (mouseenter)="isCategoriesOpen = true" (mouseleave)="isCategoriesOpen = false">
+        <button type="button" class="kk-header__dropdown-btn" (click)="isCategoriesOpen = !isCategoriesOpen">
+          Categories
+          <svg width="9" height="6" viewBox="0 0 9 6" fill="none"><path d="M1 1l3.5 3.5L8 1" stroke="currentColor" stroke-width="1.4"/></svg>
+        </button>
+        <div class="kk-header__dropdown-panel" *ngIf="isCategoriesOpen">
+          <a *ngFor="let cat of categories" [routerLink]="['/shop']" [queryParams]="{category: cat}" (click)="closeMenu()">
+            {{ cat }}
+          </a>
+        </div>
+      </div>
+
+      <a routerLink="/shop" routerLinkActive="is-active" (click)="closeMenu()">Shop</a>
+      <a routerLink="/about" routerLinkActive="is-active" (click)="closeMenu()">About</a>
+      <a routerLink="/contact" routerLinkActive="is-active" (click)="closeMenu()">Contact</a>
+    </nav>
+
+    <div class="kk-header__actions">
+      <a routerLink="/cart" class="kk-header__cart" (click)="closeMenu()" aria-label="View cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="10" cy="21" r="1.4" fill="currentColor"/>
+          <circle cx="18" cy="21" r="1.4" fill="currentColor"/>
+        </svg>
+        <span class="kk-header__cart-badge" *ngIf="(cartItemCount$ | async) as count">{{ count }}</span>
+      </a>
+
+      <ng-container *ngIf="currentUser$ | async as user; else loggedOutTpl">
+        <div class="kk-header__account" (mouseenter)="isAccountOpen = true" (mouseleave)="isAccountOpen = false">
+          <button type="button" class="kk-header__account-btn" (click)="isAccountOpen = !isAccountOpen">
+            <span class="kk-header__avatar">{{ user.name.charAt(0) }}</span>
+            {{ user.name.split(' ')[0] }}
+          </button>
+          <div class="kk-header__account-panel" *ngIf="isAccountOpen">
+            <p class="kk-header__account-email">{{ user.email }}</p>
+            <a routerLink="/admin" *ngIf="user.isAdmin" (click)="closeMenu()">Admin: Broadcast</a>
+            <button type="button" (click)="logout()">Log Out</button>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #loggedOutTpl>
+        <a routerLink="/login" class="kk-header__login-link" (click)="closeMenu()">Log In</a>
+        <a routerLink="/register" class="kk-btn kk-btn--copper kk-header__register-btn" (click)="closeMenu()">Register</a>
+      </ng-template>
+
+      <a class="kk-btn kk-btn--outline kk-header__cta" routerLink="/contact">Enquire Now</a>
+    </div>
+
+    <button class="kk-header__burger" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>

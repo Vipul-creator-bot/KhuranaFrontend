@@ -1,0 +1,54 @@
+<section class="kk-shop-hero">
+  <div class="kk-container">
+    <span class="kk-eyebrow">The Collection</span>
+    <h1>Shop All Kitchenware</h1>
+    <p>Browse cookware, bakeware, cutlery and table essentials — designed to last, made to be used daily.</p>
+  </div>
+</section>
+
+<section class="kk-section kk-shop">
+  <div class="kk-container kk-shop__layout">
+    <aside class="kk-shop__sidebar">
+      <h4>Search</h4>
+      <form class="kk-shop__search" (ngSubmit)="onSearch()">
+        <input type="text" placeholder="Search products…" [(ngModel)]="searchTerm" name="search" />
+        <button type="submit" aria-label="Search">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor"/><path d="M11.5 11.5L15 15" stroke="currentColor" stroke-linecap="round"/></svg>
+        </button>
+      </form>
+
+      <h4>Categories</h4>
+      <ul class="kk-shop__categories">
+        <li>
+          <button type="button" [class.is-active]="!activeCategory" (click)="selectCategory('')">All Products</button>
+        </li>
+        <li *ngFor="let cat of categories">
+          <button type="button" [class.is-active]="activeCategory === cat.name" (click)="selectCategory(cat.name)">
+            {{ cat.name }}
+          </button>
+        </li>
+      </ul>
+    </aside>
+
+    <div class="kk-shop__main">
+      <kk-category-hero *ngIf="activeCategoryObj" [category]="activeCategoryObj"></kk-category-hero>
+
+      <div class="kk-shop__toolbar">
+        <p class="kk-shop__count">{{ products.length }} product{{ products.length === 1 ? '' : 's' }}</p>
+        <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
+          <option value="default">Sort: Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+        </select>
+      </div>
+
+      <div class="kk-product-grid" *ngIf="!loading && products.length">
+        <kk-product-card *ngFor="let product of products" [product]="product"></kk-product-card>
+      </div>
+
+      <div class="kk-shop__empty" *ngIf="!loading && !products.length">
+        <p>No products found. Try a different category or search term.</p>
+      </div>
+    </div>
+  </div>
+</section>

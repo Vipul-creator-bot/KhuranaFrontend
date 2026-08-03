@@ -1,0 +1,106 @@
+.kk-admin-hero {
+  padding: 56px 0 40px;
+  border-bottom: 1px solid var(--kk-line);
+  h1 { font-size: clamp(2rem, 3.4vw, 2.6rem); margin: 12px 0 10px; }
+  p { color: var(--kk-steel); max-width: 520px; }
+}
+
+.kk-admin__layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.kk-admin__composer,
+.kk-admin__members {
+  background: var(--kk-ivory);
+  padding: 28px;
+  border-radius: var(--kk-radius-md);
+}
+
+h2 { font-size: 1.2rem; margin-bottom: 20px; }
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--kk-font-utility);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--kk-steel);
+  margin-bottom: 16px;
+}
+
+textarea {
+  border: 1px solid var(--kk-line);
+  background: var(--kk-cream);
+  padding: 12px 14px;
+  font-family: var(--kk-font-body);
+  font-size: 0.95rem;
+  color: var(--kk-charcoal);
+  text-transform: none;
+  letter-spacing: normal;
+  border-radius: var(--kk-radius-sm);
+  resize: vertical;
+  &:focus { outline: none; border-color: var(--kk-copper); }
+}
+
+.kk-admin__char-count {
+  align-self: flex-end;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.75rem;
+}
+
+.kk-admin__error { color: #b04c4c; font-size: 0.88rem; margin-top: 12px; }
+
+.kk-admin__result-summary {
+  background: rgba(74, 125, 85, 0.1);
+  border: 1px solid rgba(74, 125, 85, 0.3);
+  color: #3d6845;
+  padding: 14px 16px;
+  border-radius: var(--kk-radius-sm);
+  font-size: 0.92rem;
+  margin: 0 0 20px;
+}
+
+.kk-admin__failed {
+  margin-bottom: 20px;
+  h3 { font-size: 0.9rem; color: #b04c4c; margin-bottom: 8px; }
+  ul { margin: 0; padding-left: 18px; font-size: 0.85rem; color: var(--kk-steel); }
+}
+
+.kk-admin__member-count { color: var(--kk-steel); font-size: 0.85rem; margin-bottom: 18px; }
+
+.kk-admin__member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 480px;
+  overflow-y: auto;
+}
+.kk-admin__member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--kk-line);
+
+  div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  strong { font-size: 0.92rem; }
+  span { font-size: 0.8rem; color: var(--kk-steel); }
+}
+.kk-admin__member-phone {
+  font-family: var(--kk-font-utility);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  &.is-missing { color: var(--kk-steel); font-style: italic; }
+}
+.kk-admin__empty { color: var(--kk-steel); font-size: 0.9rem; }
+
+@media (max-width: 900px) {
+  .kk-admin__layout { grid-template-columns: 1fr; }
+}

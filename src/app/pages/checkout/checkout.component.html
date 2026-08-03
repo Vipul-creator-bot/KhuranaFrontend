@@ -1,0 +1,159 @@
+<section class="kk-section kk-checkout" *ngIf="!loading">
+  <div class="kk-container">
+    <nav class="kk-breadcrumb">
+      <a routerLink="/">Home</a> /
+      <a *ngIf="isCartMode" routerLink="/cart">Cart</a>
+      <a *ngIf="!isCartMode" routerLink="/shop">Shop</a> /
+      <span>Checkout</span>
+    </nav>
+
+    <ng-container *ngIf="lines.length; else emptyOrNotFoundTpl">
+      <div class="kk-checkout__layout" *ngIf="payState !== 'success'; else successTpl">
+        <div class="kk-checkout__summary">
+          <h1>Checkout</h1>
+
+          <div class="kk-checkout__perk" *ngIf="!isLoggedIn">
+            🎉 <strong>Get an extra 5% off</strong> this order —
+            <a (click)="goToRegister()">create an account</a> or
+            <a (click)="goToLogin()">log in</a> before you pay.
+          </div>
+          <div class="kk-checkout__perk kk-checkout__perk--active" *ngIf="isLoggedIn && discountPercent > 0">
+            ✓ Your first-order 5% discount will be applied automatically at payment.
+          </div>
+
+          <div class="kk-checkout__item" *ngFor="let line of lines">
+            <img [src]="line.product.image" [alt]="line.product.name" />
+            <div class="kk-checkout__item-info">
+              <span class="kk-eyebrow">{{ line.product.category }}</span>
+              <h3>{{ line.product.name }}</h3>
+              <p class="kk-checkout__price">&#8377;{{ line.product.salePrice | number }} <span>/ unit</span></p>
+            </div>
+            <div class="kk-qty-control">
+              <button type="button" (click)="decrementQty(line)" [disabled]="line.quantity <= 1">−</button>
+              <span>{{ line.quantity }}</span>
+              <button type="button" (click)="incrementQty(line)" [disabled]="line.quantity >= 10">+</button>
+            </div>
+            <div class="kk-checkout__line-total">&#8377;{{ (line.product.salePrice * line.quantity) | number }}</div>
+          </div>
+
+          <a *ngIf="isCartMode" routerLink="/cart" class="kk-checkout__edit-cart">Edit Cart</a>
+
+          <div class="kk-checkout__price-breakdown">
+            <div class="kk-checkout__price-row">
+              <span>Subtotal</span>
+              <span>&#8377;{{ baseTotal | number }}</span>
+            </div>
+            <div class="kk-checkout__price-row kk-checkout__price-row--discount" *ngIf="discountPercent > 0">
+              <span>First-Order Discount ({{ discountPercent }}%)</span>
+              <span>&minus;&#8377;{{ (baseTotal - finalAmount) | number }}</span>
+            </div>
+          </div>
+
+          <div class="kk-checkout__total">
+            <span>Total Amount</span>
+            <strong>&#8377;{{ finalAmount | number }}</strong>
+          </div>
+        </div>
+
+        <div class="kk-checkout__form">
+          <h2>Contact Details</h2>
+          <p class="kk-checkout__hint">We'll use these to send your payment receipt and order updates.</p>
+
+          <label>
+            Full Name
+            <input type="text" [(ngModel)]="customerName" name="customerName" placeholder="Your full name" />
+          </label>
+          <label>
+            Email Address
+            <input type="email" [(ngModel)]="customerEmail" name="customerEmail" placeholder="you@example.com" />
+          </label>
+          <label>
+            Phone Number
+            <input type="tel" [(ngModel)]="customerPhone" name="customerPhone" placeholder="10-digit mobile number" />
+          </label>
+          <label>
+            Delivery Address
+            <textarea
+              [(ngModel)]="customerAddress"
+              name="customerAddress"
+              rows="3"
+              placeholder="House/Flat No., Street, Sector, Gurgaon, Haryana - PIN code"
+            ></textarea>
+            <span class="kk-checkout__field-hint">We currently deliver only within Gurgaon — please include the city name.</span>
+          </label>
+
+          <div class="kk-delivery-status" [ngSwitch]="locationStatus">
+            <p *ngSwitchCase="'checking'" class="kk-delivery-status__checking">
+              📍 Checking if we deliver to your location…
+            </p>
+            <p *ngSwitchCase="'available'" class="kk-delivery-status__ok">
+              ✓ Great news — you're within our Gurgaon delivery zone ({{ locationDistanceKm }} km from our store).
+            </p>
+            <div *ngSwitchCase="'unavailable'" class="kk-delivery-status__blocked">
+              <p>
+                😕 Sorry, we currently only deliver within Gurgaon.
+                Your location is about {{ locationDistanceKm }} km from our store.
+              </p>
+              <button type="button" (click)="checkLocation()">Check Again</button>
+            </div>
+            <div *ngSwitchCase="'denied'" class="kk-delivery-status__blocked">
+              <p>📍 We need your location to confirm we deliver to your address.</p>
+              <button type="button" (click)="checkLocation()">Enable Location &amp; Retry</button>
+            </div>
+            <div *ngSwitchCase="'unsupported'" class="kk-delivery-status__blocked">
+              <p>Your browser doesn't support location sharing, so we can't confirm delivery here.</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="kk-btn kk-btn--primary kk-checkout__pay-btn"
+            (click)="payNow()"
+            [disabled]="!canPay || payState === 'creating-order' || payState === 'awaiting-payment' || payState === 'verifying'"
+          >
+            <ng-container [ngSwitch]="payState">
+              <span *ngSwitchCase="'creating-order'">Preparing Payment…</span>
+              <span *ngSwitchCase="'awaiting-payment'">Waiting for Payment…</span>
+              <span *ngSwitchCase="'verifying'">Verifying Payment…</span>
+              <span *ngSwitchDefault>Pay &#8377;{{ finalAmount | number }} Now</span>
+            </ng-container>
+          </button>
+
+          <p class="kk-checkout__secure">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1l5.5 2.2v3.3c0 3.5-2.3 6.6-5.5 7.5-3.2-.9-5.5-4-5.5-7.5V3.2L8 1z" stroke="currentColor"/></svg>
+            Secured by Razorpay — cards, UPI &amp; netbanking accepted
+          </p>
+
+          <p class="kk-checkout__error" *ngIf="payState === 'error'">{{ errorMessage }}</p>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</section>
+
+<ng-template #successTpl>
+  <div class="kk-checkout__success">
+    <div class="kk-checkout__success-icon">&#10003;</div>
+    <h2>Payment Successful!</h2>
+    <p>Thank you for your order. A confirmation will be sent to your email shortly.</p>
+    <p class="kk-checkout__ref">Payment Reference: {{ paymentId }}</p>
+    <a routerLink="/shop" class="kk-btn kk-btn--primary">Continue Shopping</a>
+  </div>
+</ng-template>
+
+<ng-template #emptyOrNotFoundTpl>
+  <section class="kk-section kk-not-found" *ngIf="!loading">
+    <div class="kk-container">
+      <ng-container *ngIf="isCartMode; else productNotFoundTpl">
+        <h1>Your Cart is Empty</h1>
+        <p>Add a few things you love, then come back here to check out.</p>
+        <a routerLink="/shop" class="kk-btn kk-btn--primary">Browse Products</a>
+      </ng-container>
+      <ng-template #productNotFoundTpl>
+        <h1>Product Not Found</h1>
+        <p>We couldn't find this product for checkout.</p>
+        <a routerLink="/shop" class="kk-btn kk-btn--primary">Back to Shop</a>
+      </ng-template>
+    </div>
+  </section>
+</ng-template>

@@ -1,0 +1,57 @@
+<section class="kk-cart-hero">
+  <div class="kk-container">
+    <span class="kk-eyebrow">Your Selection</span>
+    <h1>Shopping Cart</h1>
+  </div>
+</section>
+
+<section class="kk-section kk-cart" *ngIf="!loading">
+  <div class="kk-container">
+    <ng-container *ngIf="lines.length; else emptyTpl">
+      <div class="kk-cart__layout">
+        <div class="kk-cart__lines">
+          <div class="kk-cart__line" *ngFor="let line of lines">
+            <a [routerLink]="['/product', line.product.id]" class="kk-cart__line-media">
+              <img [src]="line.product.image" [alt]="line.product.name" />
+            </a>
+            <div class="kk-cart__line-info">
+              <span class="kk-eyebrow">{{ line.product.category }}</span>
+              <h3><a [routerLink]="['/product', line.product.id]">{{ line.product.name }}</a></h3>
+              <p class="kk-cart__unit-price">&#8377;{{ line.product.salePrice | number }} / unit</p>
+            </div>
+
+            <div class="kk-qty-control">
+              <button type="button" (click)="decrement(line.product.id, line.quantity)">−</button>
+              <span>{{ line.quantity }}</span>
+              <button type="button" (click)="increment(line.product.id, line.quantity)" [disabled]="line.quantity >= 10">+</button>
+            </div>
+
+            <div class="kk-cart__line-total">&#8377;{{ line.lineTotal | number }}</div>
+
+            <button type="button" class="kk-cart__remove" (click)="remove(line.product.id)" aria-label="Remove item">
+              &#10005;
+            </button>
+          </div>
+        </div>
+
+        <aside class="kk-cart__summary">
+          <h2>Order Summary</h2>
+          <div class="kk-cart__summary-row">
+            <span>Subtotal</span>
+            <span>&#8377;{{ subtotal | number }}</span>
+          </div>
+          <p class="kk-cart__summary-note">Discounts (if eligible) are calculated at checkout.</p>
+          <a routerLink="/checkout" class="kk-btn kk-btn--primary kk-cart__checkout-btn">Proceed to Checkout</a>
+          <a routerLink="/shop" class="kk-cart__continue">Continue Shopping</a>
+        </aside>
+      </div>
+    </ng-container>
+  </div>
+</section>
+
+<ng-template #emptyTpl>
+  <div class="kk-cart__empty">
+    <p>Your cart is empty.</p>
+    <a routerLink="/shop" class="kk-btn kk-btn--primary">Start Shopping</a>
+  </div>
+</ng-template>

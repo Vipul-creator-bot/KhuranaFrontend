@@ -1,0 +1,85 @@
+<ng-container *ngIf="product; else notFoundTpl">
+  <section class="kk-section kk-pd">
+    <div class="kk-container">
+      <nav class="kk-breadcrumb">
+        <a routerLink="/">Home</a> / <a routerLink="/shop">Shop</a> /
+        <a routerLink="/shop" [queryParams]="{category: product.category}">{{ product.category }}</a> /
+        <span>{{ product.name }}</span>
+      </nav>
+
+      <div class="kk-pd__layout">
+        <div class="kk-pd__media">
+          <kk-media-gallery
+            [images]="product.images"
+            [video]="product.video"
+            [alt]="product.name"
+            [badge]="discountPercent > 0 ? discountPercent + '% Off' : null"
+          ></kk-media-gallery>
+        </div>
+
+        <div class="kk-pd__info">
+          <span class="kk-eyebrow">{{ product.category }}</span>
+          <h1>{{ product.name }}</h1>
+          <p class="kk-pd__sku">SKU: {{ product.sku }}</p>
+
+          <div class="kk-pd__price">
+            <span class="kk-pd__price--strike" *ngIf="discountPercent > 0">&#8377;{{ product.price | number }}</span>
+            <span class="kk-pd__price--sale">&#8377;{{ product.salePrice | number }}</span>
+          </div>
+
+          <p class="kk-pd__desc">{{ product.description }}</p>
+
+          <p class="kk-pd__stock" [class.out]="!product.inStock">
+            {{ product.inStock ? 'In Stock' : 'Currently Out of Stock' }}
+          </p>
+
+          <div class="kk-pd__qty">
+            <label>Quantity</label>
+            <div class="kk-qty-control">
+              <button type="button" (click)="decrementQty()" [disabled]="quantity <= 1">−</button>
+              <span>{{ quantity }}</span>
+              <button type="button" (click)="incrementQty()" [disabled]="quantity >= 10">+</button>
+            </div>
+          </div>
+
+          <div class="kk-pd__actions">
+            <button type="button" class="kk-btn kk-btn--outline" (click)="addToCart()">
+              {{ justAdded ? 'Added to Cart ✓' : 'Add to Cart' }}
+            </button>
+            <a class="kk-btn kk-btn--primary" [routerLink]="['/checkout', product.id]">Buy Now</a>
+          </div>
+          <a class="kk-pd__whatsapp" [href]="whatsappLink" target="_blank" rel="noopener">Enquire on WhatsApp instead</a>
+
+          <ul class="kk-pd__meta">
+            <li><strong>Category:</strong> {{ product.category }}</li>
+            <li><strong>Care:</strong> See product care instructions on delivery</li>
+            <li><strong>Shipping:</strong> Pan-India delivery, 5–10 business days</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="kk-section kk-section--ivory" *ngIf="related.length">
+    <div class="kk-container">
+      <div class="kk-section-head">
+        <span class="kk-eyebrow">You May Also Like</span>
+        <div class="kk-divider"></div>
+        <h2>More from {{ product.category }}</h2>
+      </div>
+      <div class="kk-product-grid">
+        <kk-product-card *ngFor="let p of related" [product]="p"></kk-product-card>
+      </div>
+    </div>
+  </section>
+</ng-container>
+
+<ng-template #notFoundTpl>
+  <section class="kk-section kk-not-found" *ngIf="!loading">
+    <div class="kk-container">
+      <h1>Product Not Found</h1>
+      <p>The product you're looking for doesn't exist or may have been removed.</p>
+      <a routerLink="/shop" class="kk-btn kk-btn--primary">Back to Shop</a>
+    </div>
+  </section>
+</ng-template>

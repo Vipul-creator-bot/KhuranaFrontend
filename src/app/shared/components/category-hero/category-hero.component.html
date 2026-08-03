@@ -1,0 +1,46 @@
+<div class="kk-cat-hero">
+  <div class="kk-cat-hero__viewer" kkTilt [kkTiltMax]="5">
+    <video
+      *ngIf="showVideo"
+      [src]="category.video"
+      controls
+      autoplay
+      playsinline
+      class="kk-cat-hero__video"
+    ></video>
+    <img
+      *ngIf="!showVideo"
+      [src]="category.images[activeImageIndex]"
+      [alt]="category.name"
+      class="kk-cat-hero__image"
+    />
+  </div>
+
+  <div class="kk-cat-hero__thumbs">
+    <button
+      type="button"
+      class="kk-cat-hero__thumb"
+      *ngFor="let img of category.images; let i = index"
+      [class.is-active]="!showVideo && activeImageIndex === i"
+      (click)="selectImage(i)"
+    >
+      <img [src]="img" [alt]="category.name + ' view ' + (i + 1)" />
+    </button>
+
+    <button
+      type="button"
+      class="kk-cat-hero__thumb kk-cat-hero__thumb--video"
+      *ngIf="category.video"
+      [class.is-active]="showVideo"
+      (click)="playVideo()"
+    >
+      <img [src]="category.images[0]" [alt]="category.name + ' video'" />
+      <span class="kk-cat-hero__play">&#9658;</span>
+    </button>
+  </div>
+
+  <div class="kk-cat-hero__copy">
+    <span class="kk-eyebrow">{{ category.name }}</span>
+    <h2>{{ category.tagline }}</h2>
+  </div>
+</div>

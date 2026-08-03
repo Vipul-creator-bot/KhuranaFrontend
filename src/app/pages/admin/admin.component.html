@@ -1,0 +1,79 @@
+<section class="kk-admin-hero">
+  <div class="kk-container">
+    <span class="kk-eyebrow">Admin</span>
+    <h1>Broadcast to Registered Members</h1>
+    <p>Send a WhatsApp message to every member who has registered on the site.</p>
+  </div>
+</section>
+
+<section class="kk-section kk-admin">
+  <div class="kk-container kk-admin__layout">
+    <div class="kk-admin__composer">
+      <h2>Compose Broadcast</h2>
+
+      <ng-container *ngIf="sendState !== 'success'; else successTpl">
+        <label>
+          Message
+          <textarea
+            [(ngModel)]="message"
+            name="message"
+            rows="6"
+            maxlength="1600"
+            placeholder="e.g. Diwali Sale! Flat 20% off all cookware this weekend only — shop now at khuranakitchenware.com"
+          ></textarea>
+          <span class="kk-admin__char-count">{{ message.length }} / 1600</span>
+        </label>
+
+        <button
+          type="button"
+          class="kk-btn kk-btn--primary"
+          (click)="sendBroadcast()"
+          [disabled]="!message.trim() || sendState === 'sending'"
+        >
+          {{ sendState === 'sending' ? 'Sending…' : 'Send to All Members' }}
+        </button>
+
+        <p class="kk-admin__error" *ngIf="sendState === 'error'">{{ errorMessage }}</p>
+      </ng-container>
+
+      <ng-template #successTpl>
+        <div class="kk-admin__result">
+          <p class="kk-admin__result-summary">
+            ✓ Broadcast sent — <strong>{{ result?.sent }}</strong> of
+            <strong>{{ result?.eligible }}</strong> eligible members reached
+            (out of {{ result?.totalMembers }} total members).
+          </p>
+
+          <div class="kk-admin__failed" *ngIf="result && result.failedCount > 0">
+            <h3>{{ result.failedCount }} message(s) failed</h3>
+            <ul>
+              <li *ngFor="let f of result.failed">{{ f.name }} ({{ f.phone }}) — {{ f.error }}</li>
+            </ul>
+          </div>
+
+          <button type="button" class="kk-btn kk-btn--outline" (click)="sendAnother()">Send Another Broadcast</button>
+        </div>
+      </ng-template>
+    </div>
+
+    <aside class="kk-admin__members">
+      <h2>Registered Members</h2>
+      <p class="kk-admin__member-count" *ngIf="!loadingMembers">
+        {{ members.length }} total &middot; {{ membersWithPhone }} with a WhatsApp number
+      </p>
+
+      <div class="kk-admin__member-list" *ngIf="!loadingMembers">
+        <div class="kk-admin__member" *ngFor="let m of members">
+          <div>
+            <strong>{{ m.name }}</strong>
+            <span>{{ m.email }}</span>
+          </div>
+          <span class="kk-admin__member-phone" [class.is-missing]="!m.phone">
+            {{ m.phone || 'No phone on file' }}
+          </span>
+        </div>
+        <p class="kk-admin__empty" *ngIf="!members.length">No members have registered yet.</p>
+      </div>
+    </aside>
+  </div>
+</section>

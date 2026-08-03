@@ -1,0 +1,33 @@
+.kk-newsletter {
+  display: flex;
+  gap: 0;
+  max-width: 380px;
+  border: 1px solid var(--kk-line-light);
+
+  input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 13px 16px;
+    color: inherit;
+    font-family: var(--kk-font-body);
+    font-size: 0.9rem;
+
+    &::placeholder { color: rgba(255, 253, 248, 0.5); }
+    &:focus { outline: none; }
+  }
+
+  button {
+    border: none;
+    padding: 13px 20px;
+    white-space: nowrap;
+  }
+}
+
+.kk-newsletter__status {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: var(--kk-copper-light);
+
+  &.is-error { color: #e08585; }
+}

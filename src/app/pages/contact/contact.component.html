@@ -1,0 +1,67 @@
+<section class="kk-shop-hero">
+  <div class="kk-container">
+    <span class="kk-eyebrow">Get In Touch</span>
+    <h1>Contact Khurana Kitchenware</h1>
+    <p>Questions about a product, bulk orders or corporate gifting? Our team is here to help.</p>
+  </div>
+</section>
+
+<section class="kk-section kk-contact">
+  <div class="kk-container kk-contact__layout">
+    <div class="kk-contact__info">
+      <h3>Visit Us</h3>
+      <p>Shop no. 2, Jacobpura Rd, near Guru Ravi Dass Temple, New Basti, Sector 8, Gurugram, Haryana 122001</p>
+
+      <h3>Call Us</h3>
+      <p><a href="tel:+919910977900">+919910977900</a></p>
+
+      <h3>Email Us</h3>
+      <p><a href="mailto:khuranakitchenware@gmail.com">khuranakitchenware&#64;gmail.com</a></p>
+
+      <h3>Business Hours</h3>
+      <p>Monday – Saturday: 10:00 AM – 7:00 PM</p>
+    </div>
+
+    <form class="kk-contact__form" #contactForm="ngForm" (ngSubmit)="submit(contactForm)">
+      <div class="kk-form-row">
+        <label>
+          Full Name*
+          <input type="text" name="name" [(ngModel)]="model.name" required minlength="2" />
+        </label>
+        <label>
+          Email Address*
+          <input type="email" name="email" [(ngModel)]="model.email" required email />
+        </label>
+      </div>
+
+      <div class="kk-form-row">
+        <label>
+          Phone Number
+          <input type="tel" name="phone" [(ngModel)]="model.phone" />
+        </label>
+        <label>
+          Subject
+          <select name="subject" [(ngModel)]="model.subject">
+            <option>General Enquiry</option>
+            <option>Product Enquiry</option>
+            <option>Bulk / Corporate Order</option>
+            <option>After-Sales Support</option>
+          </select>
+        </label>
+      </div>
+
+      <label class="kk-form-full">
+        Message*
+        <textarea name="message" rows="6" [(ngModel)]="model.message" required minlength="10"></textarea>
+      </label>
+
+      <button type="submit" class="kk-btn kk-btn--primary" [disabled]="contactForm.invalid || status === 'loading'">
+        {{ status === 'loading' ? 'Sending…' : 'Send Message' }}
+      </button>
+
+      <p class="kk-contact__status" *ngIf="statusMessage" [class.is-error]="status === 'error'">
+        {{ statusMessage }}
+      </p>
+    </form>
+  </div>
+</section>

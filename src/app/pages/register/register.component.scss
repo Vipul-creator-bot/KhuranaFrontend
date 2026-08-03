@@ -1,0 +1,83 @@
+.kk-auth {
+  padding: clamp(56px, 9vw, 100px) 0;
+  min-height: 60vh;
+}
+
+.kk-auth__inner {
+  display: flex;
+  justify-content: center;
+}
+
+.kk-auth__card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--kk-ivory);
+  padding: 40px;
+  border-radius: var(--kk-radius-md);
+
+  h1 { font-size: 1.7rem; margin: 10px 0 10px; }
+}
+
+.kk-auth__sub {
+  color: var(--kk-steel);
+  font-size: 0.92rem;
+  margin-bottom: 28px;
+  a { color: var(--kk-copper); }
+  a:hover { text-decoration: underline; }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--kk-font-utility);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--kk-steel);
+}
+
+input {
+  border: 1px solid var(--kk-line);
+  background: var(--kk-cream);
+  padding: 12px 14px;
+  font-family: var(--kk-font-body);
+  font-size: 0.95rem;
+  color: var(--kk-charcoal);
+  text-transform: none;
+  letter-spacing: normal;
+  border-radius: var(--kk-radius-sm);
+
+  &:focus { outline: none; border-color: var(--kk-copper); }
+}
+
+.kk-btn { margin-top: 6px; }
+.kk-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.kk-auth__error {
+  font-size: 0.88rem;
+  color: #b04c4c;
+  margin: 0;
+}
+
+.kk-auth__perk {
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: var(--kk-cream);
+  border-radius: var(--kk-radius-sm);
+  font-size: 0.86rem;
+  color: var(--kk-charcoal);
+}
+
+.kk-auth__hint {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.78rem;
+  color: var(--kk-steel);
+}

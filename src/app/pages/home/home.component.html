@@ -1,0 +1,146 @@
+<!-- HERO -->
+<section class="kk-hero">
+  <div class="kk-container kk-hero__inner">
+    <div class="kk-hero__copy">
+      <span class="kk-eyebrow">Est. Gurugram, India</span>
+      <h1 class="kk-hero__title">
+        Kitchenware, <em>Crafted</em><br />
+        for a Lifetime of Use.
+      </h1>
+      <p class="kk-hero__sub">
+        Khurana Kitchenware brings together enduring materials and considered design —
+        cookware, bakeware and table essentials made for kitchens that mean business.
+      </p>
+      <div class="kk-hero__actions">
+        <a routerLink="/shop" class="kk-btn kk-btn--primary">Shop Collection</a>
+        <a routerLink="/about" class="kk-btn kk-btn--outline">Our Story</a>
+      </div>
+    </div>
+    <div class="kk-hero__media" kkTilt [kkTiltMax]="7" [kkTiltScale]="1.015">
+      <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=1000&q=80" alt="Khurana Kitchenware cookware collection" />
+      <div class="kk-hero__badge">
+        <span>16+</span>
+        Signature Products
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORY GRID -->
+<section class="kk-section kk-section--ivory">
+  <div class="kk-container">
+    <div class="kk-section-head kk-section-head--center">
+      <span class="kk-eyebrow">Shop by Category</span>
+      <div class="kk-divider"></div>
+      <h2>Everything Your Kitchen Deserves</h2>
+    </div>
+
+    <div class="kk-cat-grid">
+      <a
+        class="kk-cat-card"
+        *ngFor="let cat of categories"
+        [routerLink]="['/shop']"
+        [queryParams]="{ category: cat.name }"
+      >
+        <div class="kk-cat-card__media" kkTilt [kkTiltMax]="10">
+          <img [src]="cat.images[0]" [alt]="cat.name" loading="lazy" />
+        </div>
+        <h3>{{ cat.name }}</h3>
+        <p>{{ cat.tagline }}</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- BEST SELLERS -->
+<section class="kk-section">
+  <div class="kk-container">
+    <div class="kk-section-head kk-section-head--split">
+      <div>
+        <span class="kk-eyebrow">Fan Favourites</span>
+        <div class="kk-divider"></div>
+        <h2>Our Best Sellers</h2>
+      </div>
+      <a routerLink="/shop" class="kk-btn kk-btn--outline">View All Products</a>
+    </div>
+
+    <div class="kk-product-grid" *ngIf="!loading">
+      <kk-product-card *ngFor="let product of bestSellers" [product]="product"></kk-product-card>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND VALUES -->
+<section class="kk-section kk-section--dark kk-values">
+  <div class="kk-container">
+    <div class="kk-section-head kk-section-head--center">
+      <span class="kk-eyebrow">Why Khurana</span>
+      <div class="kk-divider"></div>
+      <h2>Our Vision, Mission &amp; Values</h2>
+      <p class="kk-values__intro">
+        We exist to make everyday cooking and serving feel considered — building kitchenware that
+        performs beautifully, lasts honestly, and earns its place on your counter.
+      </p>
+    </div>
+
+    <div class="kk-values__grid">
+      <div class="kk-value" *ngFor="let value of values">
+        <h3>{{ value.title }}</h3>
+        <p>{{ value.text }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="kk-section kk-section--ivory">
+  <div class="kk-container">
+    <div class="kk-section-head kk-section-head--center">
+      <span class="kk-eyebrow">Customer Love</span>
+      <div class="kk-divider"></div>
+      <h2>What Our Customers Say</h2>
+    </div>
+
+    <div class="kk-testimonial-grid">
+      <blockquote class="kk-testimonial" *ngFor="let t of testimonials" kkTilt [kkTiltMax]="4" [kkTiltScale]="1.015">
+        <p>&ldquo;{{ t.text }}&rdquo;</p>
+        <footer>{{ t.name }} <span>— {{ t.city }}</span></footer>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="kk-section">
+  <div class="kk-container kk-faq">
+    <div class="kk-section-head">
+      <span class="kk-eyebrow">Good to Know</span>
+      <div class="kk-divider"></div>
+      <h2>Frequently Asked Questions</h2>
+    </div>
+
+    <div class="kk-faq__list">
+      <div class="kk-faq__item" *ngFor="let faq of faqs" [class.is-open]="openFaqId === faq.id">
+        <button type="button" (click)="toggleFaq(faq.id)">
+          {{ faq.question }}
+          <span class="kk-faq__icon">{{ openFaqId === faq.id ? '−' : '+' }}</span>
+        </button>
+        <p *ngIf="openFaqId === faq.id">{{ faq.answer }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="kk-cta-banner">
+  <div class="kk-container kk-cta-banner__inner">
+    <div>
+      <h2>Bring Enduring Craft Into Your Kitchen.</h2>
+      <p>Explore the full Khurana Kitchenware collection, or reach out for bulk and corporate gifting.</p>
+    </div>
+    <div class="kk-cta-banner__actions">
+      <a routerLink="/shop" class="kk-btn kk-btn--primary">Shop Now</a>
+      <a routerLink="/contact" class="kk-btn kk-btn--outline">Contact Us</a>
+    </div>
+  </div>
+</section>

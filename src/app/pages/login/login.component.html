@@ -1,0 +1,26 @@
+<section class="kk-auth">
+  <div class="kk-container kk-auth__inner">
+    <div class="kk-auth__card">
+      <span class="kk-eyebrow">Welcome Back</span>
+      <h1>Log In to Your Account</h1>
+      <p class="kk-auth__sub">New here? <a [routerLink]="['/register']" [queryParams]="{returnUrl: returnUrl}">Create an account</a> and get an extra 5% off your first order.</p>
+
+      <form #f="ngForm" (ngSubmit)="submit(f)">
+        <label>
+          Email Address
+          <input type="email" name="email" [(ngModel)]="model.email" required email />
+        </label>
+        <label>
+          Password
+          <input type="password" name="password" [(ngModel)]="model.password" required minlength="6" />
+        </label>
+
+        <button type="submit" class="kk-btn kk-btn--primary" [disabled]="f.invalid || status === 'loading'">
+          {{ status === 'loading' ? 'Logging in…' : 'Log In' }}
+        </button>
+
+        <p class="kk-auth__error" *ngIf="status === 'error'">{{ errorMessage }}</p>
+      </form>
+    </div>
+  </div>
+</section>
