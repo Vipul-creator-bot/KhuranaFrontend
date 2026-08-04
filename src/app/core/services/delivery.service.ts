@@ -16,7 +16,7 @@ export interface Coordinates {
 
 @Injectable({ providedIn: 'root' })
 export class DeliveryService {
-  private readonly base = `${environment.apiBaseUrl}/data/delivery`;
+  private readonly base = `${environment.apiBaseUrl}/delivery`;
 
   constructor(private http: HttpClient) {}
 
