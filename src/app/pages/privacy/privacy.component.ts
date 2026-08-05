@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'kk-terms',
+  selector: 'kk-privacy',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './terms.component.html',
-  styleUrl: './terms.component.scss',
+  templateUrl: './privacy.component.html',
+  styleUrl: './privacy.component.scss',
 })
-export class TermsComponent {
+export class PrivacyComponent {
   effectiveDate = '[Add effective date]';
 }

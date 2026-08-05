@@ -64,6 +64,21 @@ export const routes: Routes = [
     title: 'Return & Refund Policy | Khurana Kitchenware',
   },
   {
+    path: 'privacy',
+    loadComponent: () => import('./pages/privacy/privacy.component').then((m) => m.PrivacyComponent),
+    title: 'Privacy Policy | Khurana Kitchenware',
+  },
+  {
+    path: 'shipping',
+    loadComponent: () => import('./pages/shipping/shipping.component').then((m) => m.ShippingComponent),
+    title: 'Shipping & Delivery Policy | Khurana Kitchenware',
+  },
+  {
+    path: 'warranty',
+    loadComponent: () => import('./pages/warranty/warranty.component').then((m) => m.WarrantyComponent),
+    title: 'Warranty Policy | Khurana Kitchenware',
+  },
+  {
     path: 'admin',
     loadComponent: () => import('./pages/admin/admin.component').then((m) => m.AdminComponent),
     canActivate: [adminGuard],

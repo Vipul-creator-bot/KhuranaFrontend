@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'kk-terms',
+  selector: 'kk-warranty',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './terms.component.html',
-  styleUrl: './terms.component.scss',
+  templateUrl: './warranty.component.html',
+  styleUrl: './warranty.component.scss',
 })
-export class TermsComponent {
+export class WarrantyComponent {
   effectiveDate = '[Add effective date]';
 }

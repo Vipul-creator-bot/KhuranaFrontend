@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'kk-terms',
+  selector: 'kk-shipping',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './terms.component.html',
-  styleUrl: './terms.component.scss',
+  templateUrl: './shipping.component.html',
+  styleUrl: './shipping.component.scss',
 })
-export class TermsComponent {
+export class ShippingComponent {
   effectiveDate = '[Add effective date]';
 }

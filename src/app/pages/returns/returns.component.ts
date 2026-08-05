@@ -10,5 +10,5 @@ import { RouterLink } from '@angular/router';
   styleUrl: './returns.component.scss',
 })
 export class ReturnsComponent {
-  lastUpdated = 'July 2026';
+  effectiveDate = '[Add effective date]';
 }

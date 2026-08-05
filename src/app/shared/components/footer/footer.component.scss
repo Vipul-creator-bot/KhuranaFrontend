@@ -56,6 +56,8 @@
 
 .kk-footer__policies {
   display: flex;
+  flex-wrap: wrap;
+  row-gap: 8px;
   gap: 24px;
   a:hover { color: var(--kk-copper-light); }
 }
