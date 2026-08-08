@@ -59,9 +59,13 @@
     </div>
     <div class="kk-team-grid">
       <div class="kk-team-card" *ngFor="let t of team">
-        <h3>{{ t.name }}</h3>
-        <p>{{ t.text }}</p>
-      </div>
+  <h3>{{ t.name }}</h3>
+  <p>{{ t.text }}</p>
+
+  <ul class="kk-brand-list" *ngIf="t.brand?.length">
+    <li *ngFor="let brand of t.brand">{{ brand }}</li>
+  </ul>
+</div>
     </div>
   </div>
 </section>
