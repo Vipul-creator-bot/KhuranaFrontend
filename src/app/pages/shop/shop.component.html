@@ -17,14 +17,49 @@
         </button>
       </form>
 
-      <h4>Categories</h4>
+      <div class="kk-shop__cat-head">
+        <h4>Categories</h4>
+        <button type="button" class="kk-shop__admin-add" *ngIf="isAdmin" (click)="toggleAddCategory()">
+          {{ showCategoryForm && !categoryForm.id ? 'Cancel' : '+ Add' }}
+        </button>
+      </div>
+
+      <form class="kk-shop__admin-form" *ngIf="isAdmin && showCategoryForm" (ngSubmit)="submitCategoryForm()">
+        <label>
+          Name
+          <input type="text" [(ngModel)]="categoryForm.name" name="quickCatName" placeholder="e.g. Bakeware" />
+        </label>
+        <label>
+          Tagline
+          <input type="text" [(ngModel)]="categoryForm.tagline" name="quickCatTagline" placeholder="Optional tagline" />
+        </label>
+        <label>
+          Images
+          <input type="file" accept="image/*" multiple (change)="onCategoryFilesSelected($event)" />
+          <span class="kk-shop__admin-hint" *ngIf="categoryFiles.length">{{ categoryFiles.length }} file(s) selected</span>
+        </label>
+        <div class="kk-shop__admin-actions">
+          <button type="submit" class="kk-btn kk-btn--primary" [disabled]="categorySaveState === 'saving'">
+            {{ categorySaveState === 'saving' ? 'Saving…' : (categoryForm.id ? 'Update' : 'Create') }}
+          </button>
+          <button type="button" class="kk-btn kk-btn--outline" (click)="cancelCategoryForm()">Cancel</button>
+          <button type="button" class="kk-btn kk-btn--outline is-danger" *ngIf="categoryForm.id" (click)="deleteCategoryInline()">
+            Delete
+          </button>
+        </div>
+        <p class="kk-shop__admin-error" *ngIf="categorySaveState === 'error'">{{ categorySaveError }}</p>
+      </form>
+
       <ul class="kk-shop__categories">
         <li>
           <button type="button" [class.is-active]="!activeCategory" (click)="selectCategory('')">All Products</button>
         </li>
-        <li *ngFor="let cat of categories">
+        <li *ngFor="let cat of categories" class="kk-shop__cat-row">
           <button type="button" [class.is-active]="activeCategory === cat.name" (click)="selectCategory(cat.name)">
             {{ cat.name }}
+          </button>
+          <button type="button" class="kk-shop__cat-edit" *ngIf="isAdmin" (click)="editCategoryInline(cat)" aria-label="Edit category">
+            ✎
           </button>
         </li>
       </ul>
@@ -35,15 +70,78 @@
 
       <div class="kk-shop__toolbar">
         <p class="kk-shop__count">{{ products.length }} product{{ products.length === 1 ? '' : 's' }}</p>
-        <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
-          <option value="default">Sort: Featured</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-        </select>
+        <div class="kk-shop__toolbar-right">
+          <button type="button" class="kk-btn kk-btn--outline" *ngIf="isAdmin" (click)="toggleAddProduct()">
+            {{ showProductForm && !productForm.id ? 'Cancel' : '+ Add Product' }}
+          </button>
+          <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
+            <option value="default">Sort: Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+          </select>
+        </div>
       </div>
 
+      <form class="kk-shop__admin-form" *ngIf="isAdmin && showProductForm" (ngSubmit)="submitProductForm()">
+        <div class="kk-shop__admin-grid">
+          <label>
+            Name
+            <input type="text" [(ngModel)]="productForm.name" name="quickProdName" placeholder="e.g. Copper Kettle 1.5L" />
+          </label>
+          <label>
+            Category
+            <select [(ngModel)]="productForm.category" name="quickProdCategory">
+              <option value="" disabled>Select category…</option>
+              <option *ngFor="let c of categories" [value]="c.name">{{ c.name }}</option>
+            </select>
+          </label>
+          <label>
+            SKU
+            <input type="text" [(ngModel)]="productForm.sku" name="quickProdSku" placeholder="e.g. KK-COOK-022" />
+          </label>
+          <label>
+            Price (&#8377;)
+            <input type="number" min="0" [(ngModel)]="productForm.price" name="quickProdPrice" />
+          </label>
+          <label>
+            Sale Price (&#8377;)
+            <input type="number" min="0" [(ngModel)]="productForm.salePrice" name="quickProdSalePrice" />
+          </label>
+          <label *ngIf="!productForm.id">
+            Initial Stock
+            <input type="number" min="0" [(ngModel)]="productForm.initialStock" name="quickProdStock" placeholder="e.g. 20" />
+          </label>
+        </div>
+        <label>
+          Description
+          <textarea rows="2" [(ngModel)]="productForm.description" name="quickProdDescription"></textarea>
+        </label>
+        <label class="kk-shop__admin-checkbox">
+          <input type="checkbox" [(ngModel)]="productForm.featured" name="quickProdFeatured" />
+          Featured (shown in Best Sellers on the homepage)
+        </label>
+        <label>
+          {{ productForm.id ? 'Add More Images' : 'Product Images' }}
+          <input type="file" accept="image/*" multiple (change)="onProductFilesSelected($event)" />
+          <span class="kk-shop__admin-hint" *ngIf="productFiles.length">{{ productFiles.length }} file(s) selected</span>
+        </label>
+        <div class="kk-shop__admin-actions">
+          <button type="submit" class="kk-btn kk-btn--primary" [disabled]="productSaveState === 'saving'">
+            {{ productSaveState === 'saving' ? 'Saving…' : (productForm.id ? 'Update Product' : 'Create Product') }}
+          </button>
+          <button type="button" class="kk-btn kk-btn--outline" (click)="cancelProductForm()">Cancel</button>
+        </div>
+        <p class="kk-shop__admin-error" *ngIf="productSaveState === 'error'">{{ productSaveError }}</p>
+      </form>
+
       <div class="kk-product-grid" *ngIf="!loading && products.length">
-        <kk-product-card *ngFor="let product of products" [product]="product"></kk-product-card>
+        <kk-product-card
+          *ngFor="let product of products"
+          [product]="product"
+          [editable]="isAdmin"
+          (editClick)="editProductInline($event)"
+          (deleteClick)="deleteProductInline($event)"
+        ></kk-product-card>
       </div>
 
       <div class="kk-shop__empty" *ngIf="!loading && !products.length">

@@ -1,12 +1,27 @@
 <section class="kk-admin-hero">
   <div class="kk-container">
     <span class="kk-eyebrow">Admin</span>
-    <h1>Broadcast to Registered Members</h1>
-    <p>Send a WhatsApp message to every member who has registered on the site.</p>
+    <h1>Admin Panel</h1>
+    <p>Broadcast to registered members, and manage stock &amp; Tally sync.</p>
+
+    <div class="kk-admin-tabs">
+      <button type="button" [class.is-active]="activeTab === 'broadcast'" (click)="switchTab('broadcast')">
+        WhatsApp Broadcast
+      </button>
+      <button type="button" [class.is-active]="activeTab === 'stock'" (click)="switchTab('stock')">
+        Stock &amp; Tally
+      </button>
+      <button type="button" [class.is-active]="activeTab === 'catalog'" (click)="switchTab('catalog')">
+        Catalog
+      </button>
+      <button type="button" [class.is-active]="activeTab === 'howItWorks'" (click)="switchTab('howItWorks')">
+        How It Works
+      </button>
+    </div>
   </div>
 </section>
 
-<section class="kk-section kk-admin">
+<section class="kk-section kk-admin" *ngIf="activeTab === 'broadcast'">
   <div class="kk-container kk-admin__layout">
     <div class="kk-admin__composer">
       <h2>Compose Broadcast</h2>
@@ -73,6 +88,295 @@
           </span>
         </div>
         <p class="kk-admin__empty" *ngIf="!members.length">No members have registered yet.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="kk-section kk-admin" *ngIf="activeTab === 'stock'">
+  <div class="kk-container kk-admin__layout">
+    <div class="kk-admin__composer">
+      <h2>Add Stock</h2>
+      <p class="kk-admin__hint">
+        Adding stock here updates the live count immediately and queues the change to sync into
+        Tally. Stock also decreases automatically whenever an order is paid — see the sync status
+        panel on the right.
+      </p>
+
+      <label>
+        Product
+        <select [(ngModel)]="addStockProductId" name="addStockProductId">
+          <option [ngValue]="null" disabled>Select a product…</option>
+          <option *ngFor="let s of stockLevels" [ngValue]="s.productId">{{ s.name }} (current: {{ s.quantity }})</option>
+        </select>
+      </label>
+      <label>
+        Quantity to Add
+        <input type="number" min="1" [(ngModel)]="addStockQuantity" name="addStockQuantity" placeholder="e.g. 20" />
+      </label>
+
+      <button
+        type="button"
+        class="kk-btn kk-btn--primary"
+        (click)="submitAddStock()"
+        [disabled]="!addStockProductId || !addStockQuantity || addStockState === 'saving'"
+      >
+        {{ addStockState === 'saving' ? 'Adding…' : 'Add Stock' }}
+      </button>
+
+      <p class="kk-admin__result-summary" *ngIf="addStockState === 'success'">{{ addStockMessage }}</p>
+      <p class="kk-admin__error" *ngIf="addStockState === 'error'">{{ addStockMessage }}</p>
+
+      <h2 class="kk-admin__stock-heading">Current Stock Levels</h2>
+      <div class="kk-admin__stock-list" *ngIf="!loadingStock">
+        <div class="kk-admin__stock-row" *ngFor="let s of stockLevels">
+          <span class="kk-admin__stock-name">{{ s.name }}</span>
+          <span class="kk-admin__stock-qty" [class.is-low]="s.quantity > 0 && s.quantity <= 5" [class.is-out]="s.quantity === 0">
+            {{ s.quantity }} in stock
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <aside class="kk-admin__members">
+      <h2>Tally Sync Status</h2>
+      <p class="kk-admin__member-count" *ngIf="!loadingQueue">
+        {{ pendingCount }} pending &middot; {{ syncedCount }} synced
+      </p>
+      <p class="kk-admin__hint" *ngIf="pendingCount > 0">
+        Pending items couldn't reach Tally directly (expected if Tally runs at your shop and this
+        site is hosted remotely) — run <code>tally-sync-agent.js</code> on the same machine/network
+        as Tally to pick these up, or retry a direct connection below.
+      </p>
+
+      <button type="button" class="kk-btn kk-btn--outline" (click)="retrySync()" [disabled]="retryState === 'retrying'">
+        {{ retryState === 'retrying' ? 'Retrying…' : 'Retry Direct Sync Now' }}
+      </button>
+      <p class="kk-admin__result-summary" *ngIf="retryState === 'done'">{{ retryMessage }}</p>
+
+      <div class="kk-admin__member-list" *ngIf="!loadingQueue">
+        <div class="kk-admin__member" *ngFor="let q of tallyQueue">
+          <div>
+            <strong>{{ q.productName }}</strong>
+            <span>{{ q.isIncrease ? '+' : '-' }}{{ q.quantity }} &middot; {{ q.reason }}</span>
+            <span *ngIf="q.lastError" class="kk-admin__queue-error">{{ q.lastError }}</span>
+          </div>
+          <span class="kk-admin__queue-status" [class]="'is-' + q.status">{{ q.status }}</span>
+        </div>
+        <p class="kk-admin__empty" *ngIf="!tallyQueue.length">No stock changes yet.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="kk-section kk-admin" *ngIf="activeTab === 'catalog'">
+  <div class="kk-container">
+    <div class="kk-admin-tabs kk-admin-tabs--sub">
+      <button type="button" [class.is-active]="catalogSubTab === 'products'" (click)="switchCatalogSubTab('products')">
+        Products ({{ products.length }})
+      </button>
+      <button type="button" [class.is-active]="catalogSubTab === 'categories'" (click)="switchCatalogSubTab('categories')">
+        Categories ({{ categories.length }})
+      </button>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="kk-admin__layout" *ngIf="catalogSubTab === 'products'">
+      <div class="kk-admin__composer">
+        <h2>{{ productForm.id ? 'Edit Product' : 'Add New Product' }}</h2>
+
+        <label>
+          Name
+          <input type="text" [(ngModel)]="productForm.name" name="productName" placeholder="e.g. Copper Kettle 1.5L" />
+        </label>
+        <label>
+          Category
+          <input type="text" [(ngModel)]="productForm.category" name="productCategory" placeholder="e.g. Cookware" />
+        </label>
+        <label>
+          SKU
+          <input type="text" [(ngModel)]="productForm.sku" name="productSku" placeholder="e.g. KK-COOK-022" />
+        </label>
+        <label>
+          Price (&#8377;)
+          <input type="number" min="0" [(ngModel)]="productForm.price" name="productPrice" />
+        </label>
+        <label>
+          Sale Price (&#8377;)
+          <input type="number" min="0" [(ngModel)]="productForm.salePrice" name="productSalePrice" />
+        </label>
+        <label>
+          Description
+          <textarea rows="3" [(ngModel)]="productForm.description" name="productDescription"></textarea>
+        </label>
+        <label>
+          Video URL (optional)
+          <input type="text" [(ngModel)]="productForm.video" name="productVideo" placeholder="https://…" />
+        </label>
+        <label *ngIf="!productForm.id">
+          Initial Stock Quantity
+          <input type="number" min="0" [(ngModel)]="productForm.initialStock" name="productInitialStock" placeholder="e.g. 20" />
+        </label>
+        <label class="kk-admin__checkbox-label">
+          <input type="checkbox" [(ngModel)]="productForm.featured" name="productFeatured" />
+          Featured (shown in Best Sellers on the homepage)
+        </label>
+        <label>
+          {{ productForm.id ? 'Add More Images' : 'Product Images' }}
+          <input type="file" accept="image/*" multiple (change)="onProductFilesSelected($event)" />
+          <span class="kk-admin__hint" *ngIf="productFiles.length">{{ productFiles.length }} file(s) selected</span>
+        </label>
+
+        <div class="kk-admin__form-actions">
+          <button type="button" class="kk-btn kk-btn--primary" (click)="submitProductForm()" [disabled]="productSaveState === 'saving'">
+            {{ productSaveState === 'saving' ? 'Saving…' : (productForm.id ? 'Update Product' : 'Create Product') }}
+          </button>
+          <button type="button" class="kk-btn kk-btn--outline" *ngIf="productForm.id" (click)="cancelProductEdit()">
+            Cancel
+          </button>
+        </div>
+        <p class="kk-admin__error" *ngIf="productSaveState === 'error'">{{ productSaveError }}</p>
+      </div>
+
+      <aside class="kk-admin__members">
+        <h2>Existing Products</h2>
+        <div class="kk-admin__catalog-list" *ngIf="!loadingCatalog">
+          <div class="kk-admin__catalog-item" *ngFor="let p of products">
+            <img [src]="p.image" [alt]="p.name" *ngIf="p.image" />
+            <div class="kk-admin__catalog-info">
+              <strong>{{ p.name }}</strong>
+              <span>{{ p.category }} &middot; {{ p.sku }} &middot; &#8377;{{ p.salePrice }}</span>
+            </div>
+            <div class="kk-admin__catalog-actions">
+              <button type="button" (click)="editProduct(p)">Edit</button>
+              <button type="button" class="is-danger" (click)="deleteProduct(p)">Delete</button>
+            </div>
+          </div>
+          <p class="kk-admin__empty" *ngIf="!products.length">No products yet.</p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="kk-admin__layout" *ngIf="catalogSubTab === 'categories'">
+      <div class="kk-admin__composer">
+        <h2>{{ categoryForm.id ? 'Edit Category' : 'Add New Category' }}</h2>
+
+        <label>
+          Name
+          <input type="text" [(ngModel)]="categoryForm.name" name="categoryName" placeholder="e.g. Bakeware" />
+        </label>
+        <label>
+          Tagline
+          <input type="text" [(ngModel)]="categoryForm.tagline" name="categoryTagline" placeholder="e.g. Bake Beautifully, Every Time" />
+        </label>
+        <label>
+          Video URL (optional)
+          <input type="text" [(ngModel)]="categoryForm.video" name="categoryVideo" placeholder="https://…" />
+        </label>
+        <label>
+          {{ categoryForm.id ? 'Add More Images' : 'Category Images' }}
+          <input type="file" accept="image/*" multiple (change)="onCategoryFilesSelected($event)" />
+          <span class="kk-admin__hint" *ngIf="categoryFiles.length">{{ categoryFiles.length }} file(s) selected</span>
+        </label>
+
+        <div class="kk-admin__form-actions">
+          <button type="button" class="kk-btn kk-btn--primary" (click)="submitCategoryForm()" [disabled]="categorySaveState === 'saving'">
+            {{ categorySaveState === 'saving' ? 'Saving…' : (categoryForm.id ? 'Update Category' : 'Create Category') }}
+          </button>
+          <button type="button" class="kk-btn kk-btn--outline" *ngIf="categoryForm.id" (click)="cancelCategoryEdit()">
+            Cancel
+          </button>
+        </div>
+        <p class="kk-admin__error" *ngIf="categorySaveState === 'error'">{{ categorySaveError }}</p>
+      </div>
+
+      <aside class="kk-admin__members">
+        <h2>Existing Categories</h2>
+        <div class="kk-admin__catalog-list" *ngIf="!loadingCatalog">
+          <div class="kk-admin__catalog-item" *ngFor="let c of categories">
+            <img [src]="c.images[0]" [alt]="c.name" *ngIf="c.images && c.images.length" />
+            <div class="kk-admin__catalog-info">
+              <strong>{{ c.name }}</strong>
+              <span>{{ c.tagline }}</span>
+            </div>
+            <div class="kk-admin__catalog-actions">
+              <button type="button" (click)="editCategory(c)">Edit</button>
+              <button type="button" class="is-danger" (click)="deleteCategory(c)">Delete</button>
+            </div>
+          </div>
+          <p class="kk-admin__empty" *ngIf="!categories.length">No categories yet.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="kk-section kk-admin" *ngIf="activeTab === 'howItWorks'">
+  <div class="kk-container kk-admin__layout">
+    <div class="kk-admin__composer">
+      <h2>{{ howItWorksForm.id ? 'Edit Step' : 'Add New Step' }}</h2>
+      <p class="kk-admin__hint">
+        These steps power the "How It Works" section on the homepage. Lower order numbers show
+        first; use the up/down buttons on the right to reorder existing steps.
+      </p>
+
+      <label>
+        Title
+        <input type="text" [(ngModel)]="howItWorksForm.title" name="howItWorksTitle" placeholder="e.g. Browse &amp; Discover" />
+      </label>
+      <label>
+        Points (one per line)
+        <textarea
+          rows="4"
+          [(ngModel)]="howItWorksForm.points"
+          name="howItWorksPoints"
+          placeholder="Explore our range of products&#10;Filter by category&#10;View detailed product info"
+        ></textarea>
+      </label>
+      <label>
+        Order
+        <input type="number" min="1" [(ngModel)]="howItWorksForm.order" name="howItWorksOrder" placeholder="e.g. 1" />
+      </label>
+      <label>
+        {{ howItWorksForm.id ? 'Replace Image (optional)' : 'Image (optional)' }}
+        <input type="file" accept="image/*" (change)="onHowItWorksFileSelected($event)" />
+        <span class="kk-admin__hint" *ngIf="howItWorksFile">{{ howItWorksFile.name }} selected</span>
+      </label>
+
+      <div class="kk-admin__form-actions">
+        <button
+          type="button"
+          class="kk-btn kk-btn--primary"
+          (click)="submitHowItWorksForm()"
+          [disabled]="howItWorksSaveState === 'saving'"
+        >
+          {{ howItWorksSaveState === 'saving' ? 'Saving…' : (howItWorksForm.id ? 'Update Step' : 'Create Step') }}
+        </button>
+        <button type="button" class="kk-btn kk-btn--outline" *ngIf="howItWorksForm.id" (click)="cancelHowItWorksEdit()">
+          Cancel
+        </button>
+      </div>
+      <p class="kk-admin__error" *ngIf="howItWorksSaveState === 'error'">{{ howItWorksSaveError }}</p>
+    </div>
+
+    <aside class="kk-admin__members">
+      <h2>Existing Steps</h2>
+      <div class="kk-admin__catalog-list" *ngIf="!loadingHowItWorks">
+        <div class="kk-admin__catalog-item" *ngFor="let s of howItWorksSteps">
+          <img [src]="s.image" [alt]="s.title" *ngIf="s.image" />
+          <div class="kk-admin__catalog-info">
+            <strong>{{ s.order }}. {{ s.title }}</strong>
+            <span>{{ s.points.join(' · ') }}</span>
+          </div>
+          <div class="kk-admin__catalog-actions">
+            <button type="button" (click)="moveHowItWorksStep(s, -1)">↑</button>
+            <button type="button" (click)="moveHowItWorksStep(s, 1)">↓</button>
+            <button type="button" (click)="editHowItWorksStep(s)">Edit</button>
+            <button type="button" class="is-danger" (click)="deleteHowItWorksStep(s)">Delete</button>
+          </div>
+        </div>
+        <p class="kk-admin__empty" *ngIf="!howItWorksSteps.length">No steps yet.</p>
       </div>
     </aside>
   </div>

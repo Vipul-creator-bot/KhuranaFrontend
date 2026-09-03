@@ -13,6 +13,30 @@ import { RazorpayOptions, RazorpayPaymentResponse } from '../../core/models/razo
 
 type PayState = 'idle' | 'creating-order' | 'awaiting-payment' | 'verifying' | 'success' | 'error';
 type LocationStatus = 'checking' | 'available' | 'unavailable' | 'denied' | 'unsupported' | 'idle';
+type CustomerType = 'B2B' | 'B2C';
+
+// Standard 15-character GSTIN: 2-digit state code, 10-char PAN, 1-digit entity
+// number, literal 'Z', 1-char checksum. e.g. 07AABCU9603R1ZM
+const GSTIN_REGEX = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+
+// The regex above only checks the *shape* of a GSTIN — it can't tell a typo'd
+// check digit from a real one, since the 15th char just has to be alphanumeric.
+// This recomputes GSTN's official check digit (mod-36, factor alternating 2/1)
+// and compares it against what was entered, so a mistyped digit is caught.
+const GSTIN_CHARSET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+function isGstinChecksumValid(gstin: string): boolean {
+  if (!GSTIN_REGEX.test(gstin)) return false;
+  let factor = 1;
+  let sum = 0;
+  for (let i = 0; i < gstin.length - 1; i++) {
+    let digit = factor * GSTIN_CHARSET.indexOf(gstin[i]);
+    factor = factor === 1 ? 2 : 1;
+    digit = Math.floor(digit / 36) + (digit % 36);
+    sum += digit;
+  }
+  const checkCodePoint = (36 - (sum % 36)) % 36;
+  return GSTIN_CHARSET[checkCodePoint] === gstin[gstin.length - 1];
+}
 
 interface CheckoutLine {
   product: Product;
@@ -40,6 +64,11 @@ export class CheckoutComponent implements OnInit {
   customerEmail = '';
   customerPhone = '';
   customerAddress = '';
+
+  // B2B orders require a GSTIN for the Tally ledger/invoice; B2C orders never
+  // collect or send one, even if the field was previously filled in.
+  customerType: CustomerType = 'B2C';
+  gstNumber = '';
 
   payState: PayState = 'idle';
   errorMessage = '';
@@ -186,8 +215,26 @@ export class CheckoutComponent implements OnInit {
     this.router.navigate(['/register'], { queryParams: { returnUrl: this.router.url } });
   }
 
+  // Switching back to B2C clears any GST number typed while B2B was selected —
+  // a B2C order must never carry one forward.
+  onCustomerTypeChange() {
+    if (this.customerType === 'B2C') {
+      this.gstNumber = '';
+    }
+  }
+
+  get isGstValid(): boolean {
+    return isGstinChecksumValid(this.gstNumber.trim().toUpperCase());
+  }
+
   get canPay(): boolean {
-    return this.locationStatus === 'available' && !!this.coordinates && this.customerAddress.trim().length >= 10;
+    const gstOk = this.customerType === 'B2C' || this.isGstValid;
+    return (
+      this.locationStatus === 'available' &&
+      !!this.coordinates &&
+      this.customerAddress.trim().length >= 10 &&
+      gstOk
+    );
   }
 
   payNow() {
@@ -197,12 +244,21 @@ export class CheckoutComponent implements OnInit {
       this.payState = 'error';
       return;
     }
+    if (this.customerType === 'B2B' && !this.isGstValid) {
+      this.errorMessage = 'Please enter a valid 15-character GST number for a B2B order.';
+      this.payState = 'error';
+      return;
+    }
     this.errorMessage = '';
     this.payState = 'creating-order';
 
     const items = this.lines.map((line) => ({ productId: line.product.id, quantity: line.quantity }));
+    // Never send a GST number for a B2C order, regardless of what's in the field.
+    const gstNumber = this.customerType === 'B2B' ? this.gstNumber.trim().toUpperCase() : '';
 
-    this.paymentService.createOrder(items, this.coordinates, this.customerAddress.trim()).subscribe({
+    this.paymentService
+      .createOrder(items, this.coordinates, this.customerAddress.trim(), this.customerType, gstNumber)
+      .subscribe({
       next: (order) => {
         // Use the server's authoritative discount/amount — it re-checks
         // eligibility itself and is what actually gets charged.

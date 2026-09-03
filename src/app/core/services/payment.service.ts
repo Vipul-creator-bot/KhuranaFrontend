@@ -26,6 +26,8 @@ export interface CreateOrderResponse {
   baseAmount: number;
   discountPercent: number;
   finalAmount: number;
+  customerType: 'B2B' | 'B2C';
+  gstNumber: string;
 }
 
 export interface VerifyPayload {
@@ -43,13 +45,17 @@ export class PaymentService {
   createOrder(
     items: OrderLineItem[],
     location: { latitude: number; longitude: number },
-    address: string
+    address: string,
+    customerType: 'B2B' | 'B2C',
+    gstNumber: string
   ): Observable<CreateOrderResponse> {
     return this.http.post<CreateOrderResponse>(`${this.base}/create-order`, {
       items,
       latitude: location.latitude,
       longitude: location.longitude,
       address,
+      customerType,
+      gstNumber,
     });
   }
 

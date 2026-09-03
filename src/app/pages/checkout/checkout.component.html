@@ -71,6 +71,36 @@
             Phone Number
             <input type="tel" [(ngModel)]="customerPhone" name="customerPhone" placeholder="10-digit mobile number" />
           </label>
+
+          <label>
+            Order Type
+            <select
+              [(ngModel)]="customerType"
+              (ngModelChange)="onCustomerTypeChange()"
+              name="customerType"
+            >
+              <option value="B2C">Individual (B2C)</option>
+              <option value="B2B">Business (B2B)</option>
+            </select>
+          </label>
+          <label *ngIf="customerType === 'B2B'">
+            GST Number
+            <input
+              type="text"
+              [(ngModel)]="gstNumber"
+              name="gstNumber"
+              placeholder="15-character GSTIN, e.g. 07AABCU9603R1ZM"
+              maxlength="15"
+              style="text-transform: uppercase;"
+            />
+            <span class="kk-checkout__field-hint" *ngIf="gstNumber && !isGstValid">
+              That doesn't look like a valid GSTIN — please double-check it.
+            </span>
+            <span class="kk-checkout__field-hint" *ngIf="!gstNumber">
+              Required for B2B orders — it will appear on your Tally invoice.
+            </span>
+          </label>
+
           <label>
             Delivery Address
             <textarea

@@ -143,6 +143,63 @@
 }
 .kk-cat-card:hover .kk-cat-card__media img { transform: scale(1.08); }
 
+/* HOW IT WORKS */
+.kk-hiw-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.kk-hiw-card {
+  position: relative;
+  background: var(--kk-cream);
+  border: 2.5px solid var(--kk-charcoal);
+  border-radius: var(--kk-radius-md);
+  box-shadow: var(--kk-shadow-hard);
+  padding: 24px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover { box-shadow: var(--kk-shadow-hard-lg); transform: translate(-2px, -2px); }
+
+  h3 { font-size: 1.1rem; font-weight: 700; margin: 4px 0 10px; }
+  ul { margin: 0; padding-left: 18px; }
+  li { color: var(--kk-steel); font-size: 0.92rem; line-height: 1.6; }
+}
+.kk-hiw-card:nth-child(6n+2) { box-shadow: 4px 4px 0 var(--kk-pink); &:hover { box-shadow: 6px 6px 0 var(--kk-pink); } }
+.kk-hiw-card:nth-child(6n+3) { box-shadow: 4px 4px 0 var(--kk-lime); &:hover { box-shadow: 6px 6px 0 var(--kk-lime); } }
+.kk-hiw-card:nth-child(6n+4) { box-shadow: 4px 4px 0 var(--kk-yellow); &:hover { box-shadow: 6px 6px 0 var(--kk-yellow); } }
+.kk-hiw-card:nth-child(6n+5) { box-shadow: 4px 4px 0 var(--kk-copper); &:hover { box-shadow: 6px 6px 0 var(--kk-copper); } }
+
+.kk-hiw-card__media {
+  position: relative;
+  aspect-ratio: 16/10;
+  border-radius: var(--kk-radius-sm);
+  overflow: hidden;
+  border: 2px solid var(--kk-charcoal);
+  margin-bottom: 16px;
+  img { width: 100%; height: 100%; object-fit: cover; }
+}
+.kk-hiw-card__badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--kk-charcoal);
+  color: var(--kk-lime);
+  font-family: var(--kk-font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--kk-charcoal);
+}
+.kk-hiw-card__badge--standalone {
+  position: static;
+  margin-bottom: 14px;
+}
+
 /* PRODUCT GRID */
 .kk-product-grid {
   display: grid;
@@ -269,7 +326,7 @@
 @media (max-width: 1024px) {
   .kk-cat-grid { grid-template-columns: repeat(3, 1fr); }
   .kk-product-grid { grid-template-columns: repeat(3, 1fr); }
-  .kk-values__grid, .kk-testimonial-grid { grid-template-columns: repeat(2, 1fr); }
+  .kk-values__grid, .kk-testimonial-grid, .kk-hiw-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 860px) {
   .kk-hero__inner { grid-template-columns: 1fr; }
@@ -278,5 +335,5 @@
 @media (max-width: 640px) {
   .kk-cat-grid { grid-template-columns: repeat(2, 1fr); }
   .kk-product-grid { grid-template-columns: repeat(2, 1fr); }
-  .kk-values__grid, .kk-testimonial-grid { grid-template-columns: 1fr; }
+  .kk-values__grid, .kk-testimonial-grid, .kk-hiw-grid { grid-template-columns: 1fr; }
 }

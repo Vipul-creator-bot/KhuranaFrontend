@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Product } from '../../../core/models/product.model';
@@ -14,10 +14,27 @@ import { TiltDirective } from '../../directives/tilt.directive';
 })
 export class ProductCardComponent {
   @Input({ required: true }) product!: Product;
+  // Off by default everywhere (home page, etc.) — only the Shop page turns
+  // this on for logged-in admins, so nothing else changes appearance.
+  @Input() editable = false;
+  @Output() editClick = new EventEmitter<Product>();
+  @Output() deleteClick = new EventEmitter<Product>();
 
   justAdded = false;
 
   constructor(private cart: CartService) {}
+
+  onEdit(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.editClick.emit(this.product);
+  }
+
+  onDelete(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.deleteClick.emit(this.product);
+  }
 
   get discountPercent(): number {
     if (!this.product || this.product.price <= this.product.salePrice) return 0;

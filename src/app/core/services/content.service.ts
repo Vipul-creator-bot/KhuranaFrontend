@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Faq, Testimonial } from '../models/product.model';
+import { Faq, HowItWorksStep, Testimonial } from '../models/product.model';
 
 export interface ContactPayload {
   name: string;
@@ -24,6 +24,10 @@ export class ContentService {
 
   getFaqs(): Observable<{ count: number; faqs: Faq[] }> {
     return this.http.get<{ count: number; faqs: Faq[] }>(`${this.api}/faqs`);
+  }
+
+  getHowItWorks(): Observable<{ count: number; steps: HowItWorksStep[] }> {
+    return this.http.get<{ count: number; steps: HowItWorksStep[] }>(`${this.api}/how-it-works`);
   }
 
   submitContact(payload: ContactPayload): Observable<{ message: string }> {

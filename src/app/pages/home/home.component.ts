@@ -5,7 +5,7 @@ import { forkJoin } from 'rxjs';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { ProductService } from '../../core/services/product.service';
 import { ContentService } from '../../core/services/content.service';
-import { Category, Faq, Product, Testimonial } from '../../core/models/product.model';
+import { Category, Faq, HowItWorksStep, Product, Testimonial } from '../../core/models/product.model';
 import { TiltDirective } from '../../shared/directives/tilt.directive';
 
 @Component({
@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
   bestSellers: Product[] = [];
   testimonials: Testimonial[] = [];
   faqs: Faq[] = [];
+  howItWorksSteps: HowItWorksStep[] = [];
   openFaqId: number | null = null;
   loading = true;
 
@@ -46,12 +47,14 @@ export class HomeComponent implements OnInit {
       bestSellers: this.productService.getProducts({ featured: true }),
       testimonials: this.contentService.getTestimonials(),
       faqs: this.contentService.getFaqs(),
+      howItWorks: this.contentService.getHowItWorks(),
     }).subscribe({
-      next: ({ categories, bestSellers, testimonials, faqs }) => {
+      next: ({ categories, bestSellers, testimonials, faqs, howItWorks }) => {
         this.categories = categories.categories;
         this.bestSellers = bestSellers.products;
         this.testimonials = testimonials.testimonials;
         this.faqs = faqs.faqs;
+        this.howItWorksSteps = howItWorks.steps;
         this.loading = false;
       },
       error: () => (this.loading = false),

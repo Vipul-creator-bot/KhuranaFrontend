@@ -47,3 +47,11 @@ export interface Faq {
   question: string;
   answer: string;
 }
+
+export interface HowItWorksStep {
+  id: number;
+  order: number;
+  title: string;
+  points: string[];
+  image: string;
+}
