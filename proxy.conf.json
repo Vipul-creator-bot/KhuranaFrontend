@@ -1,11 +1,11 @@
 {
   "/api": {
-    "target": "http://localhost:4000",
+    "target": "http://api.khuranakitchenware.com",
     "secure": false,
     "changeOrigin": true
   },
   "/images": {
-    "target": "http://localhost:4000",
+    "target": "http://api.khuranakitchenware.com",
     "secure": false,
     "changeOrigin": true
   }
